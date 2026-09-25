@@ -1,9 +1,11 @@
+import Banner from '@/components/shared/homepage/Banner';
 import React from 'react';
+
 
 const page = () => {
   return (
     <div>
-      <h1>hello project</h1>
+      <Banner></Banner>
     </div>
   );
 };
