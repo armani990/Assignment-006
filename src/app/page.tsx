@@ -1,5 +1,6 @@
-import Banner from '@/components/shared/homepage/Banner';
-import Exercise from '@/components/shared/homepage/Exercise';
+import Banner from '@/components/homepage/Banner';
+import Exercise from '@/components/homepage/Exercise';
+
 import React from 'react';
 
 
@@ -7,7 +8,7 @@ const page = () => {
   return (
     <div>
       <Banner></Banner>
-    <Exercise></Exercise>
+      <Exercise></Exercise>
     </div>
   );
 };
