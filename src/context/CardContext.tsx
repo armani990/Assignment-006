@@ -12,12 +12,16 @@ import { IExercise } from "@/types/exercise.type";
 interface CardContextType {
   plan: IExercise[];
   saved: IExercise[];
+  completed: number[];
 
   addToPlan: (exercise: IExercise) => void;
   removeFromPlan: (id: number) => void;
 
   saveExercise: (exercise: IExercise) => void;
   removeFromSaved: (id: number) => void;
+
+  markAsDone: (id: number) => void;
+  isCompleted: (id: number) => boolean;
 
   isInPlan: (id: number) => boolean;
   isSaved: (id: number) => boolean;
@@ -33,20 +37,27 @@ interface Toast {
   type: ToastType;
 }
 
-const CardContext = createContext<CardContextType | undefined>(undefined);
+const CardContext = createContext<CardContextType | undefined>(
+  undefined
+);
 
 interface CardProviderProps {
   children: ReactNode;
 }
 
-export const CardProvider = ({ children }: CardProviderProps) => {
+export const CardProvider = ({
+  children,
+}: CardProviderProps) => {
   const [plan, setPlan] = useState<IExercise[]>([]);
   const [saved, setSaved] = useState<IExercise[]>([]);
+  const [completed, setCompleted] = useState<number[]>([]);
   const [toast, setToast] = useState<Toast | null>(null);
 
   useEffect(() => {
     const storedPlan = localStorage.getItem("fitlog-plan");
     const storedSaved = localStorage.getItem("fitlog-saved");
+    const storedCompleted =
+      localStorage.getItem("fitlog-completed");
 
     if (storedPlan) {
       setPlan(JSON.parse(storedPlan));
@@ -55,15 +66,32 @@ export const CardProvider = ({ children }: CardProviderProps) => {
     if (storedSaved) {
       setSaved(JSON.parse(storedSaved));
     }
+
+    if (storedCompleted) {
+      setCompleted(JSON.parse(storedCompleted));
+    }
   }, []);
 
   useEffect(() => {
-    localStorage.setItem("fitlog-plan", JSON.stringify(plan));
+    localStorage.setItem(
+      "fitlog-plan",
+      JSON.stringify(plan)
+    );
   }, [plan]);
 
   useEffect(() => {
-    localStorage.setItem("fitlog-saved", JSON.stringify(saved));
+    localStorage.setItem(
+      "fitlog-saved",
+      JSON.stringify(saved)
+    );
   }, [saved]);
+
+  useEffect(() => {
+    localStorage.setItem(
+      "fitlog-completed",
+      JSON.stringify(completed)
+    );
+  }, [completed]);
 
   const showToast = (
     message: string,
@@ -79,7 +107,9 @@ export const CardProvider = ({ children }: CardProviderProps) => {
 
     setTimeout(() => {
       setToast((currentToast) =>
-        currentToast?.id === toastId ? null : currentToast
+        currentToast?.id === toastId
+          ? null
+          : currentToast
       );
     }, 2500);
   };
@@ -87,7 +117,11 @@ export const CardProvider = ({ children }: CardProviderProps) => {
   const addToPlan = (exercise: IExercise) => {
     setPlan((previousPlan) => {
       if (previousPlan.length >= 5) {
-        showToast("Your plan is already full.", "error");
+        showToast(
+          "Your plan is already full.",
+          "error"
+        );
+
         return previousPlan;
       }
 
@@ -96,11 +130,18 @@ export const CardProvider = ({ children }: CardProviderProps) => {
       );
 
       if (alreadyExists) {
-        showToast("This workout is already in your plan.", "info");
+        showToast(
+          "This workout is already in your plan.",
+          "info"
+        );
+
         return previousPlan;
       }
 
-      showToast("Added to today's plan.", "success");
+      showToast(
+        "Added to today's plan.",
+        "success"
+      );
 
       return [...previousPlan, exercise];
     });
@@ -108,16 +149,29 @@ export const CardProvider = ({ children }: CardProviderProps) => {
 
   const removeFromPlan = (id: number) => {
     setPlan((previousPlan) => {
-      const workout = previousPlan.find((item) => item.id === id);
+      const workout = previousPlan.find(
+        (item) => item.id === id
+      );
 
       if (!workout) {
         return previousPlan;
       }
 
-      showToast("Removed from today's plan.", "success");
+      showToast(
+        "Removed from today's plan.",
+        "success"
+      );
 
-      return previousPlan.filter((item) => item.id !== id);
+      return previousPlan.filter(
+        (item) => item.id !== id
+      );
     });
+
+    setCompleted((previousCompleted) =>
+      previousCompleted.filter(
+        (completedId) => completedId !== id
+      )
+    );
   };
 
   const saveExercise = (exercise: IExercise) => {
@@ -127,11 +181,18 @@ export const CardProvider = ({ children }: CardProviderProps) => {
       );
 
       if (alreadyExists) {
-        showToast("This workout is already saved.", "info");
+        showToast(
+          "This workout is already saved.",
+          "info"
+        );
+
         return previousSaved;
       }
 
-      showToast("Saved for later.", "success");
+      showToast(
+        "Saved for later.",
+        "success"
+      );
 
       return [...previousSaved, exercise];
     });
@@ -139,17 +200,42 @@ export const CardProvider = ({ children }: CardProviderProps) => {
 
   const removeFromSaved = (id: number) => {
     setSaved((previousSaved) => {
-      const workout = previousSaved.find((item) => item.id === id);
+      const workout = previousSaved.find(
+        (item) => item.id === id
+      );
 
       if (!workout) {
         return previousSaved;
       }
 
-      showToast("Removed from saved.", "success");
+      showToast(
+        "Removed from saved.",
+        "success"
+      );
 
-      return previousSaved.filter((item) => item.id !== id);
+      return previousSaved.filter(
+        (item) => item.id !== id
+      );
     });
   };
+
+  const markAsDone = (id: number) => {
+    setCompleted((previousCompleted) => {
+      if (previousCompleted.includes(id)) {
+        return previousCompleted;
+      }
+
+      showToast(
+        "Workout marked as done.",
+        "success"
+      );
+
+      return [...previousCompleted, id];
+    });
+  };
+
+  const isCompleted = (id: number) =>
+    completed.includes(id);
 
   const isInPlan = (id: number) =>
     plan.some((item) => item.id === id);
@@ -162,12 +248,20 @@ export const CardProvider = ({ children }: CardProviderProps) => {
       value={{
         plan,
         saved,
+        completed,
+
         addToPlan,
         removeFromPlan,
+
         saveExercise,
         removeFromSaved,
+
+        markAsDone,
+        isCompleted,
+
         isInPlan,
         isSaved,
+
         showToast,
       }}
     >
@@ -220,4 +314,3 @@ export const useCardContext = () => {
 
   return context;
 };
-

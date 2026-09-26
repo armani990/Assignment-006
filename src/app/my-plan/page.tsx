@@ -13,6 +13,8 @@ const MyPlan = () => {
     saved,
     removeFromPlan,
     removeFromSaved,
+    markAsDone,
+    isCompleted,
   } = useCardContext();
 
   const currentExercises =
@@ -48,14 +50,17 @@ const MyPlan = () => {
     return exercises;
   }, [currentExercises, sortBy]);
 
+  // Active tab অনুযায়ী statistics দেখাবে
   const planStats = {
-    exercises: plan.length,
-    minutes: plan.reduce(
+    exercises: currentExercises.length,
+
+    minutes: currentExercises.reduce(
       (total, exercise) =>
         total + exercise.duration,
       0
     ),
-    calories: plan.reduce(
+
+    calories: currentExercises.reduce(
       (total, exercise) =>
         total + exercise.caloriesBurned,
       0
@@ -75,11 +80,11 @@ const MyPlan = () => {
 
       {/* Heading */}
       <div>
-        <h1 className="text-xl font-black uppercase tracking-tight text-white sm:text-2xl">
+        <h1 className="text-xl font-black uppercase tracking-tight text-white sm:text-3xl">
           My Plan
         </h1>
 
-        <p className="mt-1 text-[9px] text-zinc-500 sm:text-[10px]">
+        <p className="mt-3 text-[10px] text-zinc-500 sm:text-[15px]">
           Clip of five lifts for today. Finish them, then load more.
         </p>
       </div>
@@ -114,7 +119,7 @@ const MyPlan = () => {
             onClick={() =>
               setActiveTab("Today's Plan")
             }
-            className={`rounded px-3 py-1.5 text-[8px] transition-all duration-300 ${
+            className={`rounded px-4 py-1.5 text-[12px] transition-all duration-300 ${
               activeTab === "Today's Plan"
                 ? "bg-[#242630] text-lime-400 shadow-sm"
                 : "text-zinc-600 hover:text-white"
@@ -126,7 +131,7 @@ const MyPlan = () => {
           <button
             type="button"
             onClick={() => setActiveTab("Saved")}
-            className={`rounded px-3 py-1.5 text-[8px] transition-all duration-300 ${
+            className={`rounded px-4 py-1.5 text-[12px] transition-all duration-300 ${
               activeTab === "Saved"
                 ? "bg-[#242630] text-lime-400 shadow-sm"
                 : "text-zinc-600 hover:text-white"
@@ -137,8 +142,7 @@ const MyPlan = () => {
 
         </div>
 
-        <label className="flex items-center gap-1.5 text-[8px] text-zinc-600">
-
+        <label className="flex items-center gap-1.5 text-[12px] text-white">
           Sort by
 
           <select
@@ -146,7 +150,7 @@ const MyPlan = () => {
             onChange={(event) =>
               setSortBy(event.target.value)
             }
-            className="rounded border border-zinc-800 bg-[#17181d] px-2 py-1 text-[8px] text-zinc-400 outline-none transition focus:border-lime-400/50"
+            className="rounded border border-zinc-800 bg-[#17181d] px-2 py-1 text-[12px] text-white outline-none transition focus:border-lime-400/50"
           >
             <option value="Duration">
               Duration
@@ -164,8 +168,8 @@ const MyPlan = () => {
               Name
             </option>
           </select>
-
         </label>
+
       </div>
 
       {/* Empty State */}
@@ -194,74 +198,126 @@ const MyPlan = () => {
 
         <div className="mt-3 grid gap-3 md:grid-cols-2">
 
-          {sortedExercises.map((exercise, index) => (
+          {sortedExercises.map((exercise, index) => {
 
-            <div
-              key={exercise.id}
-              style={{
-                animationDelay: `${index * 60}ms`,
-              }}
-              className="flex gap-4 rounded-lg border border-zinc-800 bg-[#111217] p-3 opacity-0 animate-[cardIn_0.4s_ease-out_forwards] transition-all duration-300 hover:-translate-y-0.5 hover:border-zinc-700"
-            >
+            const completed = isCompleted(exercise.id);
 
-              <img
-                src={exercise.image}
-                alt={exercise.name}
-                className="h-24 w-24 shrink-0 rounded-md object-cover transition-transform duration-500 hover:scale-105"
-              />
+            return (
+              <div
+                key={exercise.id}
+                style={{
+                  animationDelay: `${index * 60}ms`,
+                }}
+                className={`flex gap-4 rounded-lg border bg-[#111217] p-3 opacity-0 animate-[cardIn_0.4s_ease-out_forwards] transition-all duration-300 hover:-translate-y-0.5 ${
+                  completed
+                    ? "border-lime-400/30"
+                    : "border-zinc-800 hover:border-zinc-700"
+                }`}
+              >
 
-              <div className="min-w-0 flex-1">
+                {/* Image */}
+                <img
+                  src={exercise.image}
+                  alt={exercise.name}
+                  className={`h-24 w-24 shrink-0 rounded-md object-cover transition-transform duration-500 hover:scale-105 ${
+                    completed ? "opacity-60" : ""
+                  }`}
+                />
 
-                <h3 className="truncate text-sm font-bold uppercase text-white">
-                  {exercise.name}
-                </h3>
+                <div className="min-w-0 flex-1">
 
-                <p className="mt-1 text-[9px] text-zinc-500">
-                  {exercise.equipment}
-                </p>
+                  {/* Name */}
+                  <div className="flex items-center gap-2">
 
-                <div className="mt-3 flex flex-wrap gap-3 text-[9px] text-zinc-500">
-                  <span>
-                    {exercise.duration} min
-                  </span>
+                    <h3
+                      className={`truncate text-sm font-bold uppercase ${
+                        completed
+                          ? "text-zinc-500 line-through"
+                          : "text-white"
+                      }`}
+                    >
+                      {exercise.name}
+                    </h3>
 
-                  <span>
-                    {exercise.caloriesBurned} kcal
-                  </span>
+                    {completed && (
+                      <span className="shrink-0 rounded-full bg-lime-400/10 px-2 py-0.5 text-[8px] font-bold uppercase text-lime-400">
+                        Done
+                      </span>
+                    )}
 
-                  <span>
-                    ★ {exercise.rating}
-                  </span>
+                  </div>
+
+                  {/* Equipment */}
+                  <p className="mt-1 text-[9px] text-zinc-500">
+                    {exercise.equipment}
+                  </p>
+
+                  {/* Stats */}
+                  <div className="mt-3 flex flex-wrap gap-3 text-[9px] text-zinc-500">
+
+                    <span>
+                      {exercise.duration} min
+                    </span>
+
+                    <span>
+                      {exercise.caloriesBurned} kcal
+                    </span>
+
+                    <span>
+                      ★ {exercise.rating}
+                    </span>
+
+                  </div>
+
+                  {/* Actions */}
+                  <div className="mt-3 flex flex-wrap gap-2">
+
+                    <Link
+                      href={`/workouts/${exercise.id}`}
+                      className="rounded bg-lime-400 px-3 py-1.5 text-[8px] font-bold text-black transition-all duration-200 hover:-translate-y-0.5 hover:bg-lime-300 active:scale-95"
+                    >
+                      View Details
+                    </Link>
+
+                    {/* Mark as Done */}
+                    {activeTab === "Today's Plan" && (
+                      <button
+                        type="button"
+                        onClick={() =>
+                          markAsDone(exercise.id)
+                        }
+                        disabled={completed}
+                        className={`rounded border px-3 py-1.5 text-[8px] font-bold transition-all duration-200 active:scale-95 ${
+                          completed
+                            ? "cursor-not-allowed border-lime-400/30 text-lime-400"
+                            : "border-zinc-700 text-zinc-400 hover:border-lime-400 hover:text-lime-400"
+                        }`}
+                      >
+                        {completed
+                          ? "Done"
+                          : "Mark as Done"}
+                      </button>
+                    )}
+
+                    {/* Remove */}
+                    <button
+                      type="button"
+                      onClick={() =>
+                        handleRemove(exercise.id)
+                      }
+                      className="rounded border border-zinc-700 px-3 py-1.5 text-[8px] text-zinc-400 transition-all duration-200 hover:border-red-400 hover:text-red-400 active:scale-95"
+                    >
+                      Remove
+                    </button>
+
+                  </div>
+
                 </div>
-
-                <div className="mt-3 flex flex-wrap gap-2">
-
-                  <Link
-                    href={`/workouts/${exercise.id}`}
-                    className="rounded bg-lime-400 px-3 py-1.5 text-[8px] font-bold text-black transition-all duration-200 hover:-translate-y-0.5 hover:bg-lime-300 active:scale-95"
-                  >
-                    View Details
-                  </Link>
-
-                  <button
-                    type="button"
-                    onClick={() =>
-                      handleRemove(exercise.id)
-                    }
-                    className="rounded border border-zinc-700 px-3 py-1.5 text-[8px] text-zinc-400 transition-all duration-200 hover:border-red-400 hover:text-red-400 active:scale-95"
-                  >
-                    Remove
-                  </button>
-
-                </div>
-
               </div>
-            </div>
-
-          ))}
+            );
+          })}
 
         </div>
-
       )}
     </section>
   );
@@ -281,7 +337,9 @@ const StatItem = ({
   return (
     <div
       className={`px-4 py-4 sm:px-8 ${
-        border ? "border-r border-zinc-800" : ""
+        border
+          ? "border-r border-zinc-800"
+          : ""
       }`}
     >
       <p className="text-[8px] uppercase tracking-wide text-zinc-600">

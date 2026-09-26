@@ -1,36 +1,127 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# FITLOG
+
+FITLOG is a simple workout library web app where users can browse different exercises, check workout details, add exercises to their daily plan, and save workouts for later.
+
+## Live Site
+
+Add your deployed website link here.
+
+## Features
+
+* Browse workout exercises from the workout library
+* View detailed information about each workout
+* See workout duration, calories, rating, equipment, sets and reps
+* Add workouts to Today's Plan
+* Save workouts for later
+* Remove workouts from the plan or saved list
+* Mark workouts as Done
+* Plan and Saved counters update automatically
+* Workout sorting by Duration, Calories, Rating and Name
+* Data is saved in localStorage, so the plan stays after refreshing the page
+* Responsive design for desktop, tablet and mobile devices
+* Toast messages for different actions
+
+## Pages
+
+### Home
+
+Shows the workout library with all available exercises.
+
+### Workout Details
+
+Shows complete information about a selected workout, including instructions and workout stats.
+
+### My Plan
+
+Shows Today's Plan and Saved workouts. Users can sort workouts, mark them as done and remove them when needed.
+
+## Technologies Used
+
+* Next.js
+* React
+* TypeScript
+* Tailwind CSS
+* REST API
+* localStorage
+
+## Project Structure
+
+```text
+src/
+├── app/
+│   ├── layout.tsx
+│   ├── page.tsx
+│   ├── globals.css
+│   ├── workouts/
+│   │   └── [id]/
+│   │       └── page.tsx
+│   └── my-plan/
+│       └── page.tsx
+│
+├── components/
+│   ├── homepage/
+│   │   ├── Banner.tsx
+│   │   └── Exercise.tsx
+│   │
+│   ├── shared/
+│   │   ├── ExerciseCard.tsx
+│   │   ├── Navbar.tsx
+│   │   └── Footer.tsx
+│   │
+│   └── ExerciseDetails/
+│       ├── ExerciseDetails.tsx
+│       ├── AddButton.tsx
+│       └── SaveButton.tsx
+│
+├── context/
+│   └── CardContext.tsx
+│
+└── types/
+    └── exercise.type.ts
+```
+
+## How It Works
+
+The workout data comes from an API and is displayed in the workout library. When a user adds a workout to the plan or saves it, the data is managed through React Context.
+
+The plan, saved workouts and completed workouts are also stored in localStorage. Because of this, the data does not disappear when the page is refreshed.
+
+The project uses dynamic routes for workout details, so each workout can be opened from its own URL.
 
 ## Getting Started
 
-First, run the development server:
+First, install the dependencies:
+
+```bash
+npm install
+```
+
+Then run the development server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open the project in the browser at:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```text
+http://localhost:3000
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Build
 
-## Learn More
+To create a production build:
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+npm run build
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+To run the production version:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```bash
+npm start
+```
 
-## Deploy on Vercel
+## Author
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Developed as part of a Programming Hero assignment.
