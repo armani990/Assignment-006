@@ -1,7 +1,12 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
+import { useCardContext } from "@/context/CardContext";
 
 const Navbar = () => {
+  const { plan, saved } = useCardContext();
+
   return (
     <nav className="border-b border-zinc-800 bg-[#0b0c0f]">
       <div className="mx-auto flex h-14 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
@@ -57,7 +62,10 @@ const Navbar = () => {
           </div>
 
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2">
+          <Link
+            href="/"
+            className="flex items-center gap-2"
+          >
             <div className="flex h-6 w-6 items-center justify-center rounded">
               <Image
                 src="/logo.png"
@@ -94,20 +102,20 @@ const Navbar = () => {
         {/* Right Side */}
         <div className="flex items-center gap-2 text-xs">
 
-          {/* Plan */}
+          {/* Plan Count */}
           <Link
             href="/my-plan"
             className="rounded-full bg-lime-400 px-3 py-1.5 font-semibold text-black transition hover:bg-lime-300"
           >
-            Plan
+            Plan {plan.length}
           </Link>
 
-          {/* Saved */}
+          {/* Saved Count */}
           <Link
             href="/my-plan"
             className="rounded-full border border-zinc-700 px-3 py-1.5 text-zinc-300 transition hover:border-zinc-500 hover:text-white"
           >
-            Saved
+            Saved {saved.length}
           </Link>
 
         </div>
