@@ -3,14 +3,18 @@ import ExerciseCard from "@/components/shared/ExerciseCard";
 
 const Exercise = async () => {
   const response = await fetch(
-    "https://api.abcz.workers.dev/api/fitlog",
+    "https://api.api-store.workers.dev/api/fitlog",
     {
-      cache: "no-store",
+      next: {
+        revalidate: 3600,
+      },
     }
   );
 
   if (!response.ok) {
-    throw new Error("Failed to fetch exercises");
+    throw new Error(
+      `Failed to fetch exercises: ${response.status} ${response.statusText}`
+    );
   }
 
   const exercises: IExercise[] = await response.json();

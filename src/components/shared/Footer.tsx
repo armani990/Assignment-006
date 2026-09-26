@@ -23,7 +23,7 @@ const Footer = () => {
         </Link>
 
         {/* Copyright */}
-        <p className="text-right text-[8px] text-zinc-600">
+        <p className="text-right text-[14px] text-zinc-600">
           © 2026 FITLOG — Workout Library. Train hard, stay consistent.
         </p>
 

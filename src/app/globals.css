@@ -1,2 +1,42 @@
 @import "tailwindcss";
 @plugin "daisyui";
+
+/* ================================
+   FITLOG MOTION
+================================ */
+
+@keyframes toastIn {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, 20px) scale(0.95);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translate(-50%, 0) scale(1);
+  }
+}
+
+@keyframes pageIn {
+ 0% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes cardIn {
+  0% {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

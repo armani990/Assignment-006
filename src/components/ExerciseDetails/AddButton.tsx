@@ -7,9 +7,7 @@ interface AddButtonProps {
   exercise: IExercise;
 }
 
-const AddButton = ({
-  exercise,
-}: AddButtonProps) => {
+const AddButton = ({ exercise }: AddButtonProps) => {
   const {
     addToPlan,
     isInPlan,
@@ -20,10 +18,6 @@ const AddButton = ({
   const planFull = plan.length >= 5;
 
   const handleAdd = () => {
-    if (alreadyAdded || planFull) {
-      return;
-    }
-
     addToPlan(exercise);
   };
 
@@ -32,7 +26,7 @@ const AddButton = ({
       type="button"
       onClick={handleAdd}
       disabled={alreadyAdded || planFull}
-      className="rounded-lg bg-lime-400 px-5 py-3 text-sm font-bold uppercase text-black transition hover:bg-lime-300 disabled:cursor-not-allowed disabled:opacity-50"
+      className="rounded-lg bg-lime-400 px-5 py-3 text-sm font-bold uppercase text-black transition-all duration-200 hover:-translate-y-0.5 hover:bg-lime-300 hover:shadow-[0_8px_25px_rgba(163,230,53,0.15)] active:translate-y-0 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0 disabled:hover:shadow-none"
     >
       {alreadyAdded
         ? "Already in plan"
