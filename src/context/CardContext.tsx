@@ -13,6 +13,7 @@ interface CardContextType {
   plan: IExercise[];
   saved: IExercise[];
   completed: number[];
+  isReady: boolean;
 
   addToPlan: (exercise: IExercise) => void;
   removeFromPlan: (id: number) => void;
@@ -51,6 +52,7 @@ export const CardProvider = ({
   const [plan, setPlan] = useState<IExercise[]>([]);
   const [saved, setSaved] = useState<IExercise[]>([]);
   const [completed, setCompleted] = useState<number[]>([]);
+  const [isReady, setIsReady] = useState(false);
   const [toast, setToast] = useState<Toast | null>(null);
 
   useEffect(() => {
@@ -70,28 +72,42 @@ export const CardProvider = ({
     if (storedCompleted) {
       setCompleted(JSON.parse(storedCompleted));
     }
+
+    setIsReady(true);
   }, []);
 
   useEffect(() => {
+    if (!isReady) {
+      return;
+    }
+
     localStorage.setItem(
       "fitlog-plan",
       JSON.stringify(plan)
     );
-  }, [plan]);
+  }, [plan, isReady]);
 
   useEffect(() => {
+    if (!isReady) {
+      return;
+    }
+
     localStorage.setItem(
       "fitlog-saved",
       JSON.stringify(saved)
     );
-  }, [saved]);
+  }, [saved, isReady]);
 
   useEffect(() => {
+    if (!isReady) {
+      return;
+    }
+
     localStorage.setItem(
       "fitlog-completed",
       JSON.stringify(completed)
     );
-  }, [completed]);
+  }, [completed, isReady]);
 
   const showToast = (
     message: string,
@@ -249,6 +265,7 @@ export const CardProvider = ({
         plan,
         saved,
         completed,
+        isReady,
 
         addToPlan,
         removeFromPlan,
@@ -314,3 +331,4 @@ export const useCardContext = () => {
 
   return context;
 };
+

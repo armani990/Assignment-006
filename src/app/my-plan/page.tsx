@@ -15,6 +15,7 @@ const MyPlan = () => {
     removeFromSaved,
     markAsDone,
     isCompleted,
+    isReady,
   } = useCardContext();
 
   const currentExercises =
@@ -50,17 +51,16 @@ const MyPlan = () => {
     return exercises;
   }, [currentExercises, sortBy]);
 
-  // Active tab অনুযায়ী statistics দেখাবে
   const planStats = {
-    exercises: currentExercises.length,
+    exercises: plan.length,
 
-    minutes: currentExercises.reduce(
+    minutes: plan.reduce(
       (total, exercise) =>
         total + exercise.duration,
       0
     ),
 
-    calories: currentExercises.reduce(
+    calories: plan.reduce(
       (total, exercise) =>
         total + exercise.caloriesBurned,
       0
@@ -74,6 +74,22 @@ const MyPlan = () => {
       removeFromSaved(id);
     }
   };
+
+  if (!isReady) {
+    return (
+      <section className="mx-auto flex min-h-[calc(100vh-96px)] max-w-[1400px] items-center justify-center px-3 py-5 sm:px-6 lg:px-8">
+        <div className="flex flex-col items-center justify-center text-center">
+
+          <div className="h-10 w-10 animate-spin rounded-full border-4 border-zinc-800 border-t-lime-400" />
+
+          <p className="mt-4 text-sm font-semibold uppercase tracking-[0.18em] text-zinc-500">
+            Loading workouts…
+          </p>
+
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className="mx-auto min-h-[calc(100vh-96px)] max-w-[1400px] px-3 py-5 sm:px-6 lg:px-8 animate-[pageIn_0.45s_ease-out]">
@@ -175,7 +191,7 @@ const MyPlan = () => {
       {/* Empty State */}
       {sortedExercises.length === 0 ? (
 
-        <div className="mt-3 flex min-h-[310px] flex-col items-center justify-center rounded-lg border border-zinc-900 bg-[#101115] text-center animate-[pageIn_0.35s_ease-out]">
+        <div className="mt-3 flex min-h-[310px] flex-col items-center justify-center rounded-lg border border-zinc-900 bg-[#101115] animate-[pageIn_0.35s_ease-out]">
 
           <h2 className="text-[11px] font-black uppercase tracking-wide text-white">
             Nothing here yet
@@ -279,7 +295,6 @@ const MyPlan = () => {
                       View Details
                     </Link>
 
-                    {/* Mark as Done */}
                     {activeTab === "Today's Plan" && (
                       <button
                         type="button"
@@ -299,7 +314,6 @@ const MyPlan = () => {
                       </button>
                     )}
 
-                    {/* Remove */}
                     <button
                       type="button"
                       onClick={() =>
