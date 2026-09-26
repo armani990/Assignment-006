@@ -1,3 +1,4 @@
+import { notFound } from "next/navigation";
 import { IExercise } from "@/types/exercise.type";
 import ExerciseDetails from "@/components/ExerciseDetails/ExerciseDetails";
 
@@ -28,23 +29,10 @@ const WorkoutDetailsPage = async ({ params }: PageProps) => {
   );
 
   if (!exercise) {
-    return (
-      <section className="flex min-h-[70vh] items-center justify-center px-4">
-        <div className="text-center">
-          <h1 className="text-3xl font-black uppercase text-white">
-            Workout Not Found
-          </h1>
-
-          <p className="mt-2 text-sm text-zinc-500">
-            The workout you are looking for does not exist.
-          </p>
-        </div>
-      </section>
-    );
+    notFound();
   }
 
   return <ExerciseDetails exercise={exercise} />;
 };
 
 export default WorkoutDetailsPage;
-
